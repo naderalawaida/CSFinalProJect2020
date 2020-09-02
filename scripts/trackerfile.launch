@@ -1,0 +1,7 @@
+<launch>
+  <node name="color_tracker00" pkg="myrobot" type="tracking00.py" output="screen"/>
+  <node name="color_tracker01" pkg="myrobot" type="tracking01.py" output="screen"/>
+  <node name="color_tracker02" pkg="myrobot" type="tracking02.py" output="screen"/>
+  <node name="color_tracker03" pkg="myrobot" type="tracking03.py" output="screen"/>
+  <node name="color_tracker04" pkg="myrobot" type="tracking04.py" output="screen"/>
+</launch>

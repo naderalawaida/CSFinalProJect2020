@@ -1,0 +1,7 @@
+<launch>
+  <node name="tb0_node" pkg="myrobot" type="launchtb0.py" output="screen"/>
+  <node name="tb1_node" pkg="myrobot" type="launchtb1.py" output="screen"/>
+  <node name="tb2_node" pkg="myrobot" type="launchtb2.py" output="screen"/>
+  <node name="tb3_node" pkg="myrobot" type="launchtb3.py" output="screen"/>
+  <node name="tb4_node" pkg="myrobot" type="launchtb4.py" output="screen"/>
+</launch>

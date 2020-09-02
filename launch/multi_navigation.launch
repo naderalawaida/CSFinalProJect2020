@@ -1,0 +1,233 @@
+<launch>
+
+  <param name="/use_sim_time" value="true"/>
+
+  <!-- Arguments -->
+  <arg name="model" default="waffle_pi" doc="model type [burger, waffle, waffle_pi]"/>
+  <arg name="map_file" default="$(find turtlebot3_manipulation_navigation)/maps/map.yaml"/>
+  <arg name="open_rviz" default="true"/>
+  <arg name="move_forward_only" default="false"/>
+  <arg name="cmd_vel_topic" default="/tb3_4/cmd_vel" />
+  <arg name="odom_topic" default="/tb3_4/odom" />
+
+ <!-- Command Line Arguments -->
+  <arg name="tb3_4_init_x" default="0.0"/>
+  <arg name="tb3_4_init_y" default="0.0"/>
+  <arg name="tb3_4_init_a" default="0.0"/>
+
+  <!-- Turtlebot3 -->
+  <arg name="urdf_file" default="$(find xacro)/xacro --inorder '$(find turtlebot3_manipulation_description)/urdf/turtlebot3_manipulation_robot.urdf.xacro'" />
+  <param name="robot_description" command="$(arg urdf_file)" />
+ 
+
+  <!-- Map server -->
+  <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)">
+ <param name="frame_id" value="/map"/>
+ </node>
+
+ 
+
+  <!-- rviz -->
+  <group if="$(arg open_rviz)"> 
+    <node pkg="rviz" type="rviz" name="rviz" required="true"
+          args="-d $(find turtlebot3_manipulation_navigation)/rviz/multi_turtlebot3_manipulation_navigation.rviz" output="screen"/>
+  </group>
+
+ <!-- First Robot -->
+
+    <!-- Robot State Publisher -->
+    
+
+ <node pkg="laser_filters" type="scan_to_scan_filter_chain" name="laser_filter4" output="screen" >
+    <rosparam command="load" file="$(find turtlebot3_manipulation_slam)/config/scan_data_filter.yaml" />
+  </node> 
+
+     <!-- AMCL -->
+  <include file="$(find turtlebot3_manipulation_navigation)/launch/amcl_tb0.launch">
+      <param name="initial_pose_x" value="$(arg tb3_4_init_x)"/>
+      <param name="initial_pose_y" value="$(arg tb3_4_init_y)"/>
+      <param name="initial_pose_a" value="$(arg tb3_4_init_a)"/>
+  </include>
+
+ <include file="$(find turtlebot3_manipulation_navigation)/launch/amcl_tb1.launch">
+      <param name="initial_pose_x" value="$(arg tb3_4_init_x)"/>
+      <param name="initial_pose_y" value="$(arg tb3_4_init_y)"/>
+      <param name="initial_pose_a" value="$(arg tb3_4_init_a)"/>
+  </include>
+
+ <include file="$(find turtlebot3_manipulation_navigation)/launch/amcl_tb2.launch">
+      <param name="initial_pose_x" value="$(arg tb3_4_init_x)"/>
+      <param name="initial_pose_y" value="$(arg tb3_4_init_y)"/>
+      <param name="initial_pose_a" value="$(arg tb3_4_init_a)"/>
+  </include>
+
+ <include file="$(find turtlebot3_manipulation_navigation)/launch/amcl_tb3.launch">
+      <param name="initial_pose_x" value="$(arg tb3_4_init_x)"/>
+      <param name="initial_pose_y" value="$(arg tb3_4_init_y)"/>
+      <param name="initial_pose_a" value="$(arg tb3_4_init_a)"/>
+  </include>
+
+ <include file="$(find turtlebot3_manipulation_navigation)/launch/amcl_tb4.launch">
+      <param name="initial_pose_x" value="$(arg tb3_4_init_x)"/>
+      <param name="initial_pose_y" value="$(arg tb3_4_init_y)"/>
+      <param name="initial_pose_a" value="$(arg tb3_4_init_a)"/>
+  </include>
+
+
+<!-- BEGIN ROBOT 0 -->
+  <group ns="tb3_0">
+    <param name="tf_prefix" value="tb3_0" />
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base_node" output="screen">
+      <remap from="map" to="/map" />
+      <param name="controller_frequency" value="10.0" />
+
+      
+<remap from="cmd_vel" to="/tb3_0/cmd_vel"/>
+    <remap from="odom" to="/tb3_0/odom"/>
+<param name="DWAPlannerROS/min_vel_x" value="0.0" if="$(arg move_forward_only)" />
+    </node>
+<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher4">
+      <param name="publish_frequency" type="double" value="50.0" />
+      <param name="tf_prefix" value="tb3_0"/>
+
+      <rosparam file="$(find turtlebot3_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="global_costmap" />
+<rosparam file="$(find turtlebot3_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="local_costmap" />
+
+      <rosparam file="$(find turtlebot3_navigation)/param/local_costmap_params.yaml" command="load" />
+      
+      <rosparam file="$(find turtlebot3_navigation)/param/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find turtlebot3_navigation)/param/move_base_params.yaml" command="load" />
+    <rosparam file="$(find turtlebot3_navigation)/param/dwa_local_planner_params_$(arg model).yaml" command="load" />
+
+    </node>    
+
+  </group>
+  <!-- END ROBOT 0 -->
+
+
+<!-- BEGIN ROBOT 1 -->
+  <group ns="tb3_1">
+    <param name="tf_prefix" value="tb3_1" />
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base_node" output="screen">
+      <remap from="map" to="/map" />
+      <param name="controller_frequency" value="10.0" />
+
+      
+<remap from="cmd_vel" to="/tb3_1/cmd_vel"/>
+    <remap from="odom" to="/tb3_1/odom"/>
+<param name="DWAPlannerROS/min_vel_x" value="0.0" if="$(arg move_forward_only)" />
+    </node>
+<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher4">
+      <param name="publish_frequency" type="double" value="50.0" />
+      <param name="tf_prefix" value="tb3_1"/>
+
+      <rosparam file="$(find turtlebot3_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="global_costmap" />
+<rosparam file="$(find turtlebot3_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="local_costmap" />
+
+      <rosparam file="$(find turtlebot3_navigation)/param/local_costmap_params.yaml" command="load" />
+      
+      <rosparam file="$(find turtlebot3_navigation)/param/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find turtlebot3_navigation)/param/move_base_params.yaml" command="load" />
+    <rosparam file="$(find turtlebot3_navigation)/param/dwa_local_planner_params_$(arg model).yaml" command="load" />
+
+    </node>    
+
+  </group>
+  <!-- END ROBOT 1 -->
+
+<!-- BEGIN ROBOT 2 -->
+  <group ns="tb3_2">
+    <param name="tf_prefix" value="tb3_2" />
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base_node" output="screen">
+      <remap from="map" to="/map" />
+      <param name="controller_frequency" value="10.0" />
+
+      
+<remap from="cmd_vel" to="/tb3_2/cmd_vel"/>
+    <remap from="odom" to="/tb3_2/odom"/>
+<param name="DWAPlannerROS/min_vel_x" value="0.0" if="$(arg move_forward_only)" />
+    </node>
+<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher4">
+      <param name="publish_frequency" type="double" value="50.0" />
+      <param name="tf_prefix" value="tb3_2"/>
+
+      <rosparam file="$(find turtlebot3_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="global_costmap" />
+<rosparam file="$(find turtlebot3_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="local_costmap" />
+
+      <rosparam file="$(find turtlebot3_navigation)/param/local_costmap_params.yaml" command="load" />
+      
+      <rosparam file="$(find turtlebot3_navigation)/param/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find turtlebot3_navigation)/param/move_base_params.yaml" command="load" />
+    <rosparam file="$(find turtlebot3_navigation)/param/dwa_local_planner_params_$(arg model).yaml" command="load" />
+
+    </node>    
+
+  </group>
+  <!-- END ROBOT 2 -->
+
+
+<!-- BEGIN ROBOT 3 -->
+  <group ns="tb3_3">
+    <param name="tf_prefix" value="tb3_3" />
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base_node" output="screen">
+      <remap from="map" to="/map" />
+      <param name="controller_frequency" value="10.0" />
+
+      
+<remap from="cmd_vel" to="/tb3_3/cmd_vel"/>
+    <remap from="odom" to="/tb3_3/odom"/>
+<param name="DWAPlannerROS/min_vel_x" value="0.0" if="$(arg move_forward_only)" />
+    </node>
+<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher4">
+      <param name="publish_frequency" type="double" value="50.0" />
+      <param name="tf_prefix" value="tb3_3"/>
+
+      <rosparam file="$(find turtlebot3_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="global_costmap" />
+<rosparam file="$(find turtlebot3_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="local_costmap" />
+
+      <rosparam file="$(find turtlebot3_navigation)/param/local_costmap_params.yaml" command="load" />
+      
+      <rosparam file="$(find turtlebot3_navigation)/param/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find turtlebot3_navigation)/param/move_base_params.yaml" command="load" />
+    <rosparam file="$(find turtlebot3_navigation)/param/dwa_local_planner_params_$(arg model).yaml" command="load" />
+
+    </node>    
+
+  </group>
+  <!-- END ROBOT 3 -->
+
+
+
+
+<!-- BEGIN ROBOT 4 -->
+  <group ns="tb3_4">
+    <param name="tf_prefix" value="tb3_4" />
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base_node" output="screen">
+      <remap from="map" to="/map" />
+      <param name="controller_frequency" value="10.0" />
+
+      
+<remap from="cmd_vel" to="$(arg cmd_vel_topic)"/>
+    <remap from="odom" to="$(arg odom_topic)"/>
+<param name="DWAPlannerROS/min_vel_x" value="0.0" if="$(arg move_forward_only)" />
+    </node>
+<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher4">
+      <param name="publish_frequency" type="double" value="50.0" />
+      <param name="tf_prefix" value="tb3_4"/>
+
+      <rosparam file="$(find turtlebot3_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="global_costmap" />
+<rosparam file="$(find turtlebot3_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="local_costmap" />
+
+      <rosparam file="$(find turtlebot3_navigation)/param/local_costmap_params.yaml" command="load" />
+      
+      <rosparam file="$(find turtlebot3_navigation)/param/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find turtlebot3_navigation)/param/move_base_params.yaml" command="load" />
+    <rosparam file="$(find turtlebot3_navigation)/param/dwa_local_planner_params_$(arg model).yaml" command="load" />
+
+    </node>    
+
+  </group>
+  <!-- END ROBOT 4 -->
+
+
+</launch>

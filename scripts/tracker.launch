@@ -1,0 +1,3 @@
+<launch>
+  <node name="color_tracker" pkg="myrobot" type="tracking.py" output="screen"/>
+</launch>
